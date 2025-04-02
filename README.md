@@ -3,10 +3,6 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/w/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)](https://github.com/sergiokml/Sii.FirmarXmlDte)
 [![GitHub contributors](https://img.shields.io/github/contributors/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)](https://github.com/sergiokml/Sii.FirmarXmlDte/graphs/contributors/)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)](https://github.com/sergiokml/Sii.FirmarXmlDte)
-![GitHub last commit](https://img.shields.io/github/last-commit/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)
-![GitHub Discussions](https://img.shields.io/github/discussions/sergiokml/Sii.FirmarXmlDte?style=for-the-badge)
-
 
 # Firma digitalmente DTE`s
 
@@ -36,7 +32,7 @@ It includes:
 
 ### 🚀 Usage
 
-Once the app is running (default on `http://localhost:5200`), you can sign DTEs via:
+Once the app is running, you can sign DTEs via:
 
 ```bash
 curl -X POST http://localhost:5200/api/dte/firmar \
@@ -78,23 +74,22 @@ You may also define these as [Azure App Settings](https://learn.microsoft.com/en
 
 ---
 
-### 🔒 Security Disclaimer
-
-> This project involves handling digital certificates and calling secure external services (SOAP). Make sure to store sensitive credentials such as certificate passwords securely using `secrets.json`, environment variables, or Azure App Settings. Never commit your certificates or passwords to the repository.
-
----
-
 ### 📢 Have a question? Found a Bug?
 
-Feel free to **file a new issue** with a respective title and description on the [TokenAuth/issues](https://github.com/sergiokml/TokenAuth/issues) repository.
+Feel free to **file a new issue** with a respective title and description on the [Sii.FirmarXmlDte/issues](https://github.com/sergiokml/FirmarXmlDte/issues) repository.
 
 ---
 
-### ❤️ Community and Contributions
+### 💖 Community and Contributions
 
-I think that **Knowledge Doesn’t Belong to Just Any One Person**, and I always intend to share my knowledge with other developers. A voluntary monetary contribution or your ideas/comments to improve these tools would be appreciated.
+If this tool was useful, consider contributing with ideas or improving it further.
 
-[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=PTKX9BNY96SNJ)
+
+<p align="center">
+    <a href="https://www.paypal.com/donate/?hosted_button_id=PTKX9BNY96SNJ" target="_blank">
+        <img width="12%" src="https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="Azure Function">
+    </a>
+</p>
 
 ---
 
@@ -102,5 +97,4 @@ I think that **Knowledge Doesn’t Belong to Just Any One Person**, and I always
 
 This repository is released under the [GNU General Public License v3.0](LICENSE.txt).
 
-> ⚠️ This repository is for educational purposes and has no official affiliation with Chile's SII.
 
