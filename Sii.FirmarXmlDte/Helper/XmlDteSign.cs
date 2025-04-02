@@ -33,8 +33,8 @@ public class XmlDteSign
         cafDoc.LoadXml(cafXml);
 
         XmlDocument dd = new();
-        dd.LoadXml("<DD></DD>");
-        XmlElement root = dd.DocumentElement!;
+        XmlElement root = dd.CreateElement("DD");
+        dd.AppendChild(root);
 
         void Append(string tag, string value)
         {
@@ -52,13 +52,20 @@ public class XmlDteSign
         Append("MNT", mnt);
         Append("IT1", it1.Length > 40 ? it1[..40] : it1);
 
-        XmlNode cafNode = cafDoc.SelectSingleNode("//CAF")!;
-        XmlNode importedCaf = dd.ImportNode(cafNode, true);
-        root.AppendChild(importedCaf);
+        XmlNode cafOriginal = cafDoc.SelectSingleNode("//CAF")!;
+        XmlElement cafClean = dd.CreateElement("CAF");
+        cafClean.SetAttribute("version", "1.0");
 
+        foreach (XmlNode child in cafOriginal.ChildNodes)
+        {
+            XmlNode imported = dd.ImportNode(child, true);
+            cafClean.AppendChild(imported);
+        }
+
+        root.AppendChild(cafClean);
         Append("TSTED", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss"));
 
-        string frmtValue = SignTedFrmt(dd.OuterXml, cafDoc);
+        string frmtValue = SignTedFrmt(dd, cafDoc);
 
         XmlElement ted = doc.CreateElement("TED", doc.DocumentElement!.NamespaceURI);
         ted.SetAttribute("version", "1.0");
@@ -78,7 +85,6 @@ public class XmlDteSign
 
         XmlDocument signed = SignXmlById(doc, cert, id);
 
-        // Force pretty printing of final document
         XmlDocument formatted = new();
         using (MemoryStream ms = new())
         {
@@ -95,7 +101,14 @@ public class XmlDteSign
             formatted.LoadXml(Encoding.GetEncoding("ISO-8859-1").GetString(ms.ToArray()));
         }
 
-        return formatted;
+        // Replace xmlns="" if it appears in DD or CAF
+        string cleaned = formatted
+            .OuterXml.Replace("<DD xmlns=\"\">", "<DD>")
+            .Replace("<CAF version=\"1.0\" xmlns=\"\">", "<CAF version=\"1.0\">");
+
+        XmlDocument final = new();
+        final.LoadXml(cleaned);
+        return final;
     }
 
     private static XmlDocument SignXmlById(
@@ -110,6 +123,9 @@ public class XmlDteSign
         reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
         signedXml.AddReference(reference);
 
+        signedXml.SignedInfo!.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
+        reference.DigestMethod = SignedXml.XmlDsigSHA1Url;
+
         KeyInfo keyInfo = new();
         keyInfo.AddClause(new RSAKeyValue(cert.GetRSAPrivateKey()!));
         keyInfo.AddClause(new KeyInfoX509Data(cert));
@@ -122,7 +138,7 @@ public class XmlDteSign
         return xmlDoc;
     }
 
-    private static string SignTedFrmt(string ddXml, XmlDocument cafDoc)
+    private static string SignTedFrmt(XmlDocument dd, XmlDocument cafDoc)
     {
         string privateKeyPem =
             cafDoc.GetElementsByTagName("RSASK")[0]?.InnerText?.Trim()
@@ -139,7 +155,21 @@ public class XmlDteSign
         using RSA rsa = RSA.Create();
         rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
 
-        byte[] ddBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(ddXml);
+        StringBuilder sbFlattened = new();
+        using (StringWriter sw = new(new StringBuilder()))
+        using (
+            XmlWriter xw = XmlWriter.Create(
+                sw,
+                new XmlWriterSettings { Indent = false, OmitXmlDeclaration = true }
+            )
+        )
+        {
+            dd.Save(xw);
+            xw.Flush();
+            sbFlattened.Append(sw.ToString());
+        }
+
+        byte[] ddBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(sbFlattened.ToString());
         byte[] signature = rsa.SignData(ddBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
 
         return Convert.ToBase64String(signature);
