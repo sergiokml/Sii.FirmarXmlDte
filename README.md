@@ -10,7 +10,7 @@
 
 # Firma digitalmente DTE`s
 
-This solution allows you to digitally sign DTE (Electronic Tax Documents) from Chile's [Servicio de Impuestos Internos (SII)](https://www.sii.cl/). It uses a CAF (Authorization Code File) to build the TED (Electronic Stamp) and sign it using a `.pfx` certificate retrieved from Azure Blob Storage.
+This solution allows you to digitally sign DTE (Electronic Tax Documents) from Chile's [Servicio de Impuestos Internos (SII)](https://www.sii.cl/). It uses a CAF (Folio Assignment Code) to build the TED (Electronic Stamp) and sign it using a `.pfx` certificate retrieved from Azure Blob Storage.
 
 It includes:
 
